@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.TestPropertySource;
@@ -41,20 +42,55 @@ public class StudentAndGradeServiceTest {
     private JdbcTemplate jdbc;
     private CollegeStudent student;
 
+    @Value("${sql.scripts.create.student}")
+    private String sqlCreateStudent;
+    @Value("${sql.scripts.create.math.grade}")
+    private String sqlCreateMathGrade;
+    @Value("${sql.scripts.create.science.grade}")
+    private String sqlCreateScienceGrade;
+    @Value("${sql.scripts.create.history.grade}")
+    private String sqlCreateHistoryGrade;
+    @Value("${sql.scripts.delete.history.grade}")
+    private String sqlDeleteHistoryGrade;
+    @Value("${sql.scripts.delete.science.grade}")
+    private String sqlDeleteScienceGrade;
+    @Value("${sql.scripts.delete.math.grade}")
+    private String sqlDeleteMathGrade;
+    @Value("${sql.scripts.delete.student}")
+    private String sqlDeleteStudent;
+
+
+//      Used hardcoded SQL query
+//    @BeforeEach
+//    public void setupDatabase() {
+//        jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address) VALUES(1, 'Dan', 'Somehow', 'dan@somehow@gmail.com')");
+//        jdbc.execute("INSERT INTO math_grade(id, student_id, grade) values (1,1,100.00)");
+//        jdbc.execute("INSERT INTO science_grade(id, student_id, grade) values (1,1,100.00)");
+//        jdbc.execute("INSERT INTO history_grade(id, student_id, grade) values (1,1,100.00)");
+//    }
+
+//    @AfterEach
+//    public void setupAfterTransaction() {
+//        jdbc.execute("DELETE FROM student");
+//        jdbc.execute("DELETE FROM math_grade");
+//        jdbc.execute("DELETE FROM science_grade");
+//        jdbc.execute("DELETE FROM history_grade");
+//    }
+
     @BeforeEach
     public void setupDatabase() {
-        jdbc.execute("INSERT INTO student(id, firstname, lastname, email_address) VALUES(1, 'Dan', 'Somehow', 'dan@somehow@gmail.com')");
-        jdbc.execute("INSERT INTO math_grade(id, student_id, grade) values (1,1,100.00)");
-        jdbc.execute("INSERT INTO science_grade(id, student_id, grade) values (1,1,100.00)");
-        jdbc.execute("INSERT INTO history_grade(id, student_id, grade) values (1,1,100.00)");
+        jdbc.execute(sqlCreateStudent);
+        jdbc.execute(sqlCreateMathGrade);
+        jdbc.execute(sqlCreateScienceGrade);
+        jdbc.execute(sqlCreateHistoryGrade);
     }
 
     @AfterEach
     public void setupAfterTransaction() {
-        jdbc.execute("DELETE FROM student");
-        jdbc.execute("DELETE FROM math_grade");
-        jdbc.execute("DELETE FROM science_grade");
-        jdbc.execute("DELETE FROM history_grade");
+        jdbc.execute(sqlDeleteStudent);
+        jdbc.execute(sqlDeleteMathGrade);
+        jdbc.execute(sqlDeleteHistoryGrade);
+        jdbc.execute(sqlDeleteScienceGrade);
     }
 
 
