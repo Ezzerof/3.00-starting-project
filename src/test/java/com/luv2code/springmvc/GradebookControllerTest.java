@@ -42,11 +42,25 @@ public class GradebookControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    private StudentAndGradeService studentAndGradeService;
 
     @Mock
     private StudentAndGradeService studentCreateServiceMock;
     @Value("${sql.scripts.create.student}")
     private String sqlCreateStudent;
+    @Value("${sql.scripts.create.math.grade}")
+    private String sqlCreateMathGrade;
+    @Value("${sql.scripts.create.science.grade}")
+    private String sqlCreateScienceGrade;
+    @Value("${sql.scripts.create.history.grade}")
+    private String sqlCreateHistoryGrade;
+    @Value("${sql.scripts.delete.history.grade}")
+    private String sqlDeleteHistoryGrade;
+    @Value("${sql.scripts.delete.science.grade}")
+    private String sqlDeleteScienceGrade;
+    @Value("${sql.scripts.delete.math.grade}")
+    private String sqlDeleteMathGrade;
     @Value("${sql.scripts.delete.student}")
     private String sqlDeleteStudent;
 
@@ -61,11 +75,17 @@ public class GradebookControllerTest {
     @BeforeEach
     public void setupDatabase() {
         jdbc.execute(sqlCreateStudent);
+        jdbc.execute(sqlCreateMathGrade);
+        jdbc.execute(sqlCreateScienceGrade);
+        jdbc.execute(sqlCreateHistoryGrade);
     }
 
     @AfterEach
     public void setupAfterTransaction() {
         jdbc.execute(sqlDeleteStudent);
+        jdbc.execute(sqlDeleteMathGrade);
+        jdbc.execute(sqlDeleteHistoryGrade);
+        jdbc.execute(sqlDeleteScienceGrade);
     }
     
     @Test
@@ -151,6 +171,29 @@ public class GradebookControllerTest {
         ModelAndViewAssert.assertViewName(mav, "error");
     }
 
+    @Test
+    @DisplayName("Create valid grade Http Request")
+    public void createValidGradeHttpRequest() throws Exception {
 
+        assertTrue(studentDAO.findById(1).isPresent());
+
+        GradebookCollegeStudent student = studentAndGradeService.studentInformation(1);
+
+        assertEquals(1, student.getStudentGrades().getMathGradeResults().size());
+
+        MvcResult mvcResult = this.mockMvc.perform(post("/grades")
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("grade", "85.00")
+                .param("gradeType", "math")
+                .param("studentId", "1")).andExpect(status().isOk()).andReturn();
+
+        ModelAndView mav = mvcResult.getModelAndView();
+
+        ModelAndViewAssert.assertViewName(mav, "studentInformation");
+
+        student = studentAndGradeService.studentInformation(1);
+
+        assertEquals(2, student.getStudentGrades().getMathGradeResults().size());
+    }
 
 }
