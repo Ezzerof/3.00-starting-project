@@ -13,7 +13,7 @@ Testing an existing project using Spring Boot framework, JUnit, Mockito, MockMvc
 
 ## How to Install and Run the Project
 1. Clone the repository to your local machine 
-    `git clone https://github.com/Ezzerof/3.00-starting-project.git`
+    `git clone https://github.com/Ezzerof/GradebookProject.git`
 2. Open the project in your preferred IDE.
 3. Run `java test package` to start the application.
 
