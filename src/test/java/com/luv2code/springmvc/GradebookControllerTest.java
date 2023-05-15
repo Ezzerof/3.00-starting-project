@@ -1,13 +1,14 @@
 package com.luv2code.springmvc;
+
 import com.luv2code.springmvc.models.CollegeStudent;
 import com.luv2code.springmvc.models.GradebookCollegeStudent;
 import com.luv2code.springmvc.models.MathGrade;
+import com.luv2code.springmvc.models.service.StudentAndGradeService;
 import com.luv2code.springmvc.repository.HistoryGradeDAO;
 import com.luv2code.springmvc.repository.MathGradeDAO;
 import com.luv2code.springmvc.repository.ScienceGradeDAO;
 import com.luv2code.springmvc.repository.StudentDAO;
 import org.junit.jupiter.api.*;
-import com.luv2code.springmvc.models.service.StudentAndGradeService;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,7 +98,7 @@ public class GradebookControllerTest {
         jdbc.execute(sqlDeleteHistoryGrade);
         jdbc.execute(sqlDeleteScienceGrade);
     }
-    
+
     @Test
     @DisplayName("GetStudentsHttpRequest")
     void getStudentsHttpRequest() throws Exception {
@@ -120,12 +121,12 @@ public class GradebookControllerTest {
 
     @Test
     @DisplayName("Creating Student by using Http request")
-    void creatingStudentByUsingHttpRequest() throws Exception{
+    void creatingStudentByUsingHttpRequest() throws Exception {
         MvcResult mvcResult = this.mockMvc.perform(post("/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .param("firstname", request.getParameterValues("firstname"))
-                .param("lastname", request.getParameterValues("lastname"))
-                .param("emailAddress", request.getParameterValues("emailAddress")))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("firstname", request.getParameterValues("firstname"))
+                        .param("lastname", request.getParameterValues("lastname"))
+                        .param("emailAddress", request.getParameterValues("emailAddress")))
                 .andExpect(status().isOk()).andReturn();
 
         ModelAndView mav = mvcResult.getModelAndView();
@@ -208,7 +209,7 @@ public class GradebookControllerTest {
 
     @Test
     @DisplayName("Create valid grade http request for an invalid student")
-    void createValidGradeHttpRequestForAnInvalidStudent() throws Exception{
+    void createValidGradeHttpRequestForAnInvalidStudent() throws Exception {
         MvcResult mvcResult = this.mockMvc.perform(post("/grades")
                 .contentType(MediaType.APPLICATION_JSON)
                 .param("grade", "85.00")
@@ -262,6 +263,15 @@ public class GradebookControllerTest {
 
         ModelAndView mav = mvcResult.getModelAndView();
 
+        ModelAndViewAssert.assertViewName(mav, "error");
+    }
+
+    @Test
+    @DisplayName("Delete an invalid grade HTTP request")
+    void deleteAnInvalidGradeHttpRequest() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/grades/{id}/{gradeType}", 1, "biology"))
+                .andExpect(status().isOk()).andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
         ModelAndViewAssert.assertViewName(mav, "error");
     }
 
