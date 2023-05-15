@@ -120,7 +120,7 @@ public class GradebookControllerTest {
     }
 
     @Test
-    @DisplayName("deleteStudentHttpRequestErrorPage")
+    @DisplayName("delete Student Http Request Error Page")
     void deleteStudentHttpRequestErrorPage() throws Exception {
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/delete/student/{id}", 0)).andExpect(status().isOk()).andReturn();
@@ -129,5 +129,28 @@ public class GradebookControllerTest {
 
         ModelAndViewAssert.assertViewName(mav, "error");
     }
+
+    @Test
+    @DisplayName("Student Information HTTP Request")
+    void studentInformationHttpRequest() throws Exception {
+        assertTrue(studentDAO.findById(1).isPresent());
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/studentInformation/{id}", 1))
+                .andExpect(status().isOk()).andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
+        ModelAndViewAssert.assertViewName(mav, "studentInformation");
+    }
+
+    @Test
+    @DisplayName("Student Information HTTP Request of Not existing student")
+    void studentInformationHttpRequestOfNotExistingStudent() throws Exception {
+        assertFalse(studentDAO.findById(0).isPresent());
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get("/studentInformation/{id}", 0))
+                .andExpect(status().isOk()).andReturn();
+        ModelAndView mav = mvcResult.getModelAndView();
+        ModelAndViewAssert.assertViewName(mav, "error");
+    }
+
+
 
 }
